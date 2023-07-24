@@ -25,4 +25,13 @@ export class PermissionMapper implements IMapper<Permission, PermissionEntity> {
       updatedAt: record.updatedAt,
     });
   }
+
+  toResponse(domain: Permission) {
+    return {
+      id: domain.id,
+      name: domain.name,
+      description: domain.description,
+      createdAt: domain.createdAt,
+    };
+  }
 }

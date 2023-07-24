@@ -40,4 +40,14 @@ export class RoleMapper implements IMapper<Role, RoleEntity> {
       permissions,
     });
   }
+
+  toResponse(domain: Role) {
+    return {
+      id: domain.id,
+      name: domain.name,
+      description: domain.description,
+      createdAt: domain.createdAt,
+      permissions: domain.permissions,
+    };
+  }
 }

@@ -23,7 +23,7 @@ export class UserMapper implements IMapper<User, UserEntity> {
     };
   }
 
-  toDomain(record: User): User {
+  toDomain(record: UserEntity): User {
     const id = uuid();
     return new User({
       id,
@@ -35,5 +35,17 @@ export class UserMapper implements IMapper<User, UserEntity> {
       updatedAt: record.updatedAt,
       roles: record.roles.map((role: Role) => this.roleMapper.toDomain(role)),
     });
+  }
+
+  toResponse(domain: User) {
+    return {
+      id: domain.id,
+      name: domain.name,
+      email: domain.email,
+      password: domain.password,
+      isAdmin: domain.isAdmin,
+      createdAt: domain.createdAt,
+      roles: domain.roles.map((role: Role) => this.roleMapper.toResponse(role)),
+    };
   }
 }
