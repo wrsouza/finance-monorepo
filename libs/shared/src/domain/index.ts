@@ -1,3 +1,2 @@
-export * from './domain';
-export * from './domain.interface';
+export * from './entity';
 export * from './mapper.interface';

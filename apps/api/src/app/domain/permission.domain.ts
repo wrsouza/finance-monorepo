@@ -1,7 +1,6 @@
-import { PermissionEntity } from '@app/shared/database/entities';
-import { Domain } from '@app/shared/domain';
+import { Entity } from '@app/shared/domain';
 
-export class Permission extends Domain<PermissionEntity> {
+export class Permission extends Entity {
   readonly name: string;
   readonly description: string;
 }

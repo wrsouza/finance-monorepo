@@ -6,4 +6,6 @@ export interface IRepository<Entity> {
   save(record: Entity): Promise<Entity>;
 
   findOne(where: FindOptionsWhere<Entity>): Promise<Entity>;
+
+  destroy(where: FindOptionsWhere<Entity>): Promise<void>;
 }

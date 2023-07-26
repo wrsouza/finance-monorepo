@@ -6,8 +6,6 @@ import { RoleMapper } from './role.mapper';
 
 @Injectable()
 export class PermissionMapper implements IMapper<Permission, PermissionEntity> {
-  constructor(private readonly roleMapper: RoleMapper) {}
-
   toPersistence(domain: Permission): PermissionEntity {
     return {
       id: domain.id,

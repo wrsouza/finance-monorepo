@@ -5,6 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { Role } from './role.domain';
 import { v4 as uuid } from 'uuid';
 import { RoleMapper } from './role.mapper';
+import { UserResponseDto } from '../usecases/users/dto/user-response.dto';
 
 @Injectable()
 export class UserMapper implements IMapper<User, UserEntity> {
@@ -37,15 +38,13 @@ export class UserMapper implements IMapper<User, UserEntity> {
     });
   }
 
-  toResponse(domain: User) {
+  toResponse(domain: User): UserResponseDto {
     return {
       id: domain.id,
       name: domain.name,
       email: domain.email,
-      password: domain.password,
       isAdmin: domain.isAdmin,
       createdAt: domain.createdAt,
-      roles: domain.roles.map((role: Role) => this.roleMapper.toResponse(role)),
     };
   }
 }

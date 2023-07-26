@@ -18,4 +18,8 @@ export abstract class BaseRepository<Entity> {
   findOne(where: FindOptionsWhere<Entity>): Promise<Entity> {
     return this.repository.findOneBy(where);
   }
+
+  async destroy(where: FindOptionsWhere<Entity>): Promise<void> {
+    await this.repository.delete(where);
+  }
 }

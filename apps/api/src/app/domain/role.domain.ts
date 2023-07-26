@@ -1,8 +1,7 @@
-import { Domain } from '@app/shared/domain';
+import { Entity } from '@app/shared/domain';
 import { Permission } from './permission.domain';
-import { RoleEntity } from '@app/shared/database/entities';
 
-export class Role extends Domain<RoleEntity> {
+export class Role extends Entity {
   readonly name: string;
   readonly description: string;
   readonly permissions: Permission[];

@@ -1,11 +1,31 @@
-import { Domain } from '@app/shared/domain/domain';
+import { Entity } from '@app/shared/domain';
 import { Role } from './role.domain';
-import { UserEntity } from '@app/shared/database/entities';
+import { UserRepository } from '../repositories/user.repository';
+import { Not } from 'typeorm';
+import { BadRequestException } from '@nestjs/common';
+import { UserMapper } from './user.mapper';
 
-export class User extends Domain<UserEntity> {
+export class User extends Entity {
   readonly name: string;
   readonly email: string;
   readonly password: string;
   readonly isAdmin: boolean;
-  readonly roles: Role[];
+  readonly roles?: Role[];
+
+  async validateEmailExist(repository: UserRepository): Promise<this> {
+    const record = await repository.findOne({
+      email: this.email,
+      id: Not(this.id),
+    });
+    if (record) {
+      throw new BadRequestException('email already exist');
+    }
+    return this;
+  }
+
+  async save(repository: UserRepository, mapper: UserMapper): Promise<this> {
+    const record = mapper.toPersistence(this);
+    await repository.save(record);
+    return this;
+  }
 }
