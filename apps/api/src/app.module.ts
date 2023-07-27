@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
-import { DatabaseModule } from '@app/shared';
 import { UsersModule } from './app/usecases/users/users.module';
+import { DatabaseModule } from '@app/shared';
 
 @Module({
   imports: [

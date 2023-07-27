@@ -15,7 +15,7 @@ export class UsersService {
   ) {}
 
   async list(): Promise<UserResponseDto[]> {
-    const users = await this.repository.list();
+    const users = await this.repository.list({});
     return users.map((user: UserEntity) =>
       this.mapper.toResponse(this.mapper.toDomain(user)),
     );

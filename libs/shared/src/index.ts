@@ -1,2 +1,3 @@
-export * from './database/database.module';
+export * from './domain';
 export * from './utils';
+export * from './database';

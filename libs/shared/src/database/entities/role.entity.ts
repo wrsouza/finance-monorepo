@@ -13,6 +13,7 @@ export class RoleEntity extends Identifiable {
 
   @ManyToMany(() => PermissionEntity, (permission) => permission.roles, {
     onDelete: 'CASCADE',
+    eager: true,
   })
   @JoinTable({
     name: 'role_permission',

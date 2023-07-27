@@ -10,7 +10,7 @@ export class User extends Entity {
   readonly email: string;
   readonly password: string;
   readonly isAdmin: boolean;
-  readonly roles?: Role[];
+  roles?: Role[] = [];
 
   async validateEmailExist(repository: UserRepository): Promise<this> {
     const record = await repository.findOne({

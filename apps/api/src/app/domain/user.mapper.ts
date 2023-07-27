@@ -25,9 +25,8 @@ export class UserMapper implements IMapper<User, UserEntity> {
   }
 
   toDomain(record: UserEntity): User {
-    const id = uuid();
     return new User({
-      id,
+      id: record.id,
       name: record.name,
       email: record.email,
       password: record.password,
