@@ -24,9 +24,11 @@ export class UsersService {
   async create(data: CreateUserDto): Promise<UserResponseDto> {
     return new User({
       ...data,
+      createdAt: new Date(),
+      updatedAt: new Date(),
       id: generateUuid(),
     })
-      .validateEmailExist(this.repository)
+      .validateExist(this.repository)
       .then((user) => user.save(this.repository, this.mapper))
       .then((user) => this.mapper.toResponse(user));
   }
@@ -41,7 +43,7 @@ export class UsersService {
   async update(id: string, data: UpdateUserDto): Promise<UserResponseDto> {
     return this.getRecord(id)
       .then((record) => this.mapper.toDomain({ ...record, ...data }))
-      .then((user) => user.validateEmailExist(this.repository))
+      .then((user) => user.validateExist(this.repository))
       .then((user) => user.save(this.repository, this.mapper))
       .then((user) => this.mapper.toResponse(user));
   }
