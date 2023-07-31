@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { RoleRepository } from '../../repositories/role.repository';
-import { Role, RoleMapper } from '../../domain';
+import { Role } from '../../domain';
 import { RoleResponseDto } from './dto/role-response.dto';
 import { RoleEntity } from '@app/shared';
 import { CreateRoleDto, UpdateRoleDto } from './dto';
@@ -8,16 +8,11 @@ import { generateUuid } from '@app/shared/utils/uuid-generate.util';
 
 @Injectable()
 export class RolesService {
-  constructor(
-    private readonly repository: RoleRepository,
-    private readonly mapper: RoleMapper,
-  ) {}
+  constructor(private readonly repository: RoleRepository) {}
 
   async list(): Promise<RoleResponseDto[]> {
     const roles = await this.repository.list({});
-    return roles.map((role: RoleEntity) =>
-      this.mapper.toResponse(this.mapper.toDomain(role)),
-    );
+    return roles.map((role) => new RoleResponseDto(role));
   }
 
   async create(data: CreateRoleDto): Promise<RoleResponseDto> {
@@ -28,23 +23,20 @@ export class RolesService {
       id: generateUuid(),
     })
       .validateExist(this.repository)
-      .then((role) => role.save(this.repository, this.mapper))
-      .then((role) => this.mapper.toResponse(role));
+      .then((role) => role.save(this.repository))
+      .then((role) => new RoleResponseDto(role));
   }
 
   async find(id: string): Promise<RoleResponseDto> {
-    return this.getRecord(id).then((record) => {
-      const user = this.mapper.toDomain(record);
-      return this.mapper.toResponse(user);
-    });
+    return this.getRecord(id).then((record) => new RoleResponseDto(record));
   }
 
   async update(id: string, data: UpdateRoleDto): Promise<RoleResponseDto> {
     return this.getRecord(id)
-      .then((record) => this.mapper.toDomain({ ...record, ...data }))
+      .then((record) => new Role({ ...record, ...data }))
       .then((role) => role.validateExist(this.repository))
-      .then((role) => role.save(this.repository, this.mapper))
-      .then((role) => this.mapper.toResponse(role));
+      .then((role) => role.save(this.repository))
+      .then((role) => new RoleResponseDto(role));
   }
 
   async destroy(id: string): Promise<void> {

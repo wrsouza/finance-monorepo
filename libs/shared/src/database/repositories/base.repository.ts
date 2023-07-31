@@ -1,4 +1,4 @@
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { FindOptionsWhere, Not, Repository } from 'typeorm';
 
 export abstract class BaseRepository<Entity> {
   private readonly repository: Repository<Entity>;
@@ -13,6 +13,13 @@ export abstract class BaseRepository<Entity> {
 
   save(record: Entity): Promise<Entity> {
     return this.repository.save(record);
+  }
+
+  validateExist(where: FindOptionsWhere<Entity>, id?: string): Promise<Entity> {
+    if (id) {
+      where['id'] = Not(id);
+    }
+    return this.repository.findOneBy(where);
   }
 
   findOne(where: FindOptionsWhere<Entity>): Promise<Entity> {

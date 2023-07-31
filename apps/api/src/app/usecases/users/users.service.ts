@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserRepository } from '../../repositories/user.repository';
-import { UserMapper } from '../../domain/user.mapper';
 import { User } from '../../domain/user.domain';
 import { UserEntity } from '@app/shared/database/entities';
 import { CreateUserDto, UpdateUserDto } from './dto';
@@ -9,16 +8,11 @@ import { UserResponseDto } from './dto/user-response.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    private readonly repository: UserRepository,
-    private readonly mapper: UserMapper,
-  ) {}
+  constructor(private readonly repository: UserRepository) {}
 
   async list(): Promise<UserResponseDto[]> {
     const users = await this.repository.list({});
-    return users.map((user: UserEntity) =>
-      this.mapper.toResponse(this.mapper.toDomain(user)),
-    );
+    return users.map((user) => new UserResponseDto(user));
   }
 
   async create(data: CreateUserDto): Promise<UserResponseDto> {
@@ -29,23 +23,20 @@ export class UsersService {
       id: generateUuid(),
     })
       .validateExist(this.repository)
-      .then((user) => user.save(this.repository, this.mapper))
-      .then((user) => this.mapper.toResponse(user));
+      .then((user) => user.save(this.repository))
+      .then((user) => new UserResponseDto(user));
   }
 
   async find(id: string): Promise<UserResponseDto> {
-    return this.getRecord(id).then((record) => {
-      const user = this.mapper.toDomain(record);
-      return this.mapper.toResponse(user);
-    });
+    return this.getRecord(id).then((record) => new UserResponseDto(record));
   }
 
   async update(id: string, data: UpdateUserDto): Promise<UserResponseDto> {
     return this.getRecord(id)
-      .then((record) => this.mapper.toDomain({ ...record, ...data }))
+      .then((record) => new User({ ...record, ...data }))
       .then((user) => user.validateExist(this.repository))
-      .then((user) => user.save(this.repository, this.mapper))
-      .then((user) => this.mapper.toResponse(user));
+      .then((user) => user.save(this.repository))
+      .then((user) => new UserResponseDto(user));
   }
 
   async destroy(id: string): Promise<void> {

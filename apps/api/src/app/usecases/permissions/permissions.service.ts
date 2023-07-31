@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PermissionRepository } from '../../repositories/permission.repository';
-import { Permission, PermissionMapper } from '../../domain';
+import { Permission } from '../../domain';
 import { PermissionResponseDto } from './dto/permission-response.dto';
 import { PermissionEntity } from '@app/shared';
 import { generateUuid } from '@app/shared/utils/uuid-generate.util';
@@ -8,15 +8,12 @@ import { CreatePermissionDto, UpdatePermissionDto } from './dto';
 
 @Injectable()
 export class PermissionsService {
-  constructor(
-    private readonly repository: PermissionRepository,
-    private readonly mapper: PermissionMapper,
-  ) {}
+  constructor(private readonly repository: PermissionRepository) {}
 
   async list(): Promise<PermissionResponseDto[]> {
     const permissions = await this.repository.list({});
-    return permissions.map((permission: PermissionEntity) =>
-      this.mapper.toResponse(this.mapper.toDomain(permission)),
+    return permissions.map(
+      (permission) => new PermissionResponseDto(permission),
     );
   }
 
@@ -28,15 +25,14 @@ export class PermissionsService {
       id: generateUuid(),
     })
       .validateExist(this.repository)
-      .then((permission) => permission.save(this.repository, this.mapper))
-      .then((permission) => this.mapper.toResponse(permission));
+      .then((permission) => permission.save(this.repository))
+      .then((permission) => new PermissionResponseDto(permission));
   }
 
   async find(id: string): Promise<PermissionResponseDto> {
-    return this.getRecord(id).then((record) => {
-      const user = this.mapper.toDomain(record);
-      return this.mapper.toResponse(user);
-    });
+    return this.getRecord(id).then(
+      (record) => new PermissionResponseDto(record),
+    );
   }
 
   async update(
@@ -44,10 +40,10 @@ export class PermissionsService {
     data: UpdatePermissionDto,
   ): Promise<PermissionResponseDto> {
     return this.getRecord(id)
-      .then((record) => this.mapper.toDomain({ ...record, ...data }))
+      .then((record) => new Permission({ ...record, ...data }))
       .then((permission) => permission.validateExist(this.repository))
-      .then((permission) => permission.save(this.repository, this.mapper))
-      .then((permission) => this.mapper.toResponse(permission));
+      .then((permission) => permission.save(this.repository))
+      .then((permission) => new PermissionResponseDto(permission));
   }
 
   async destroy(id: string): Promise<void> {
