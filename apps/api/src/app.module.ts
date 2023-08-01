@@ -5,6 +5,7 @@ import { UsersModule } from './app/usecases/users/users.module';
 import { DatabaseModule } from '@app/shared';
 import { PermissionsModule } from './app/usecases/permissions/permissions.module';
 import { RolesModule } from './app/usecases/roles/roles.module';
+import { AuthModule } from './app/usecases/auth/auth.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { RolesModule } from './app/usecases/roles/roles.module';
     UsersModule,
     PermissionsModule,
     RolesModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

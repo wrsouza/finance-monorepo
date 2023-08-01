@@ -8,4 +8,5 @@ export const swaggerConfig = new DocumentBuilder()
   .addTag('Users')
   .addTag('Roles')
   .addTag('Permissions')
+  .addBearerAuth()
   .build();

@@ -5,6 +5,7 @@ import { UserEntity } from '@app/shared/database/entities';
 import { CreateUserDto, UpdateUserDto } from './dto';
 import { generateUuid } from '@app/shared/utils/uuid-generate.util';
 import { UserResponseDto } from './dto/user-response.dto';
+import { Encrypt } from '@app/shared';
 
 @Injectable()
 export class UsersService {
@@ -18,6 +19,7 @@ export class UsersService {
   async create(data: CreateUserDto): Promise<UserResponseDto> {
     return new User({
       ...data,
+      password: Encrypt.hash(data.password),
       createdAt: new Date(),
       updatedAt: new Date(),
       id: generateUuid(),
@@ -32,8 +34,12 @@ export class UsersService {
   }
 
   async update(id: string, data: UpdateUserDto): Promise<UserResponseDto> {
+    const updatedData = { ...data };
+    if (data.password) {
+      updatedData.password = Encrypt.hash(data.password);
+    }
     return this.getRecord(id)
-      .then((record) => new User({ ...record, ...data }))
+      .then((record) => new User({ ...record, ...updatedData }))
       .then((user) => user.validateExist(this.repository))
       .then((user) => user.save(this.repository))
       .then((user) => new UserResponseDto(user));
