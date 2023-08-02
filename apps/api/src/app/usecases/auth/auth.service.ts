@@ -8,7 +8,6 @@ import { UserRepository } from '../../repositories/user.repository';
 import { compareSync } from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { sign } from 'jsonwebtoken';
-import { PayloadInterface } from '@app/shared';
 
 const DEFAULT_VALIDATION_MESSAGE = 'email or password invalid';
 

@@ -1,30 +1,17 @@
 import { Entity } from '@app/shared/domain';
 import { Role } from './role.domain';
-import { UserRepository } from '../repositories/user.repository';
-import { BadRequestException } from '@nestjs/common';
+import { IRepository, IUserEntity } from '@app/shared';
 
-export class User extends Entity {
+export class User extends Entity<IUserEntity> {
   readonly name: string;
   readonly email: string;
   readonly password: string;
   readonly isAdmin: boolean;
   roles?: Role[] = [];
 
-  async validateExist(repository: UserRepository): Promise<this> {
-    const record = await repository.validateExist(
-      {
-        email: this.email,
-      },
-      this.id,
-    );
-    if (record) {
-      throw new BadRequestException('email already exist');
-    }
-    return this;
-  }
-
-  async save(repository: UserRepository): Promise<this> {
-    await repository.save(this);
-    return this;
+  async validateExist(repository: IRepository<IUserEntity>): Promise<this> {
+    return super.validateExist(repository, {
+      email: this.email,
+    });
   }
 }

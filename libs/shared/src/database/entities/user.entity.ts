@@ -1,9 +1,17 @@
 import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
-import { Identifiable } from './identifiable';
-import { RoleEntity } from './role.entity';
+import { IIdentifiable, Identifiable } from './identifiable';
+import { IRoleEntity, RoleEntity } from './role.entity';
+
+export interface IUserEntity extends IIdentifiable {
+  name: string;
+  email: string;
+  password: string;
+  isAdmin: boolean;
+  roles?: IRoleEntity[];
+}
 
 @Entity('users')
-export class UserEntity extends Identifiable {
+export class UserEntity extends Identifiable implements IUserEntity {
   @Column({ type: 'varchar', length: 100 })
   name: string;
 

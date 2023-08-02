@@ -1,6 +1,12 @@
 import { CreateDateColumn, PrimaryColumn, UpdateDateColumn } from 'typeorm';
 
-export abstract class Identifiable {
+export interface IIdentifiable {
+  id: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export abstract class Identifiable implements IIdentifiable {
   @PrimaryColumn({ type: 'uuid' })
   id: string;
 
