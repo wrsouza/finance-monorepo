@@ -4,12 +4,18 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Put,
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto, UpdateUserDto, UserDto } from './dto';
+import {
+  CreateUserDto,
+  UpdateUserDto,
+  UpdateUserRolesDto,
+  UserDto,
+} from './dto';
 import { UserResponseDto } from './dto/user-response.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthorizeGuard, JwtAuthGuard, Roles } from '@app/shared';
@@ -57,5 +63,15 @@ export class UsersController {
   @Delete('/:id')
   destroy(@Param() { id }: UserDto): Promise<void> {
     return this.service.destroy(id);
+  }
+
+  @Roles('users-roles')
+  @UseGuards(AuthorizeGuard)
+  @Patch('/:id/roles')
+  updateRoles(
+    @Param() { id }: UserDto,
+    @Body() data: UpdateUserRolesDto,
+  ): Promise<UserResponseDto> {
+    return this.service.updateRoles(id, data);
   }
 }

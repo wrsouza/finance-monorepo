@@ -14,4 +14,9 @@ export class User extends Entity<IUserEntity> {
       email: this.email,
     });
   }
+
+  async updateRoles(roles: Role[]): Promise<this> {
+    this.roles = roles;
+    return this;
+  }
 }

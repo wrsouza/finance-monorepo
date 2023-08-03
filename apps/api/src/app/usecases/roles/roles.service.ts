@@ -1,14 +1,27 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { RoleRepository } from '../../repositories/role.repository';
-import { Role } from '../../domain';
-import { RoleResponseDto } from './dto/role-response.dto';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  forwardRef,
+} from '@nestjs/common';
+import { Permission, Role } from '../../domain';
 import { RoleEntity } from '@app/shared';
-import { CreateRoleDto, UpdateRoleDto } from './dto';
-import { generateUuid } from '@app/shared/utils/uuid-generate.util';
+import {
+  CreateRoleDto,
+  UpdateRoleDto,
+  UpdateRolePermissionsDto,
+  RoleResponseDto,
+} from './dto';
+import { generateUuid } from '@app/shared/utils';
+import { RoleRepository, PermissionRepository } from '../../repositories';
 
 @Injectable()
 export class RolesService {
-  constructor(private readonly repository: RoleRepository) {}
+  constructor(
+    private readonly repository: RoleRepository,
+    @Inject(forwardRef(() => PermissionRepository))
+    private readonly permissionRepository: PermissionRepository,
+  ) {}
 
   async list(): Promise<RoleResponseDto[]> {
     const roles = await this.repository.list({});
@@ -42,6 +55,24 @@ export class RolesService {
   async destroy(id: string): Promise<void> {
     await this.getRecord(id);
     await this.repository.destroy({ id });
+  }
+
+  async updatePermissions(
+    id: string,
+    data: UpdateRolePermissionsDto,
+  ): Promise<RoleResponseDto> {
+    return this.getRecord(id)
+      .then((record) => new Role(record))
+      .then(async (role) => {
+        const permissions = await this.permissionRepository.findByIds(
+          data.permissions,
+        );
+        return role.updatePermissions(
+          permissions.map((permission) => new Permission(permission)),
+        );
+      })
+      .then((role) => role.save(this.repository))
+      .then((role) => new RoleResponseDto(role));
   }
 
   async getRecord(id: string): Promise<RoleEntity> {

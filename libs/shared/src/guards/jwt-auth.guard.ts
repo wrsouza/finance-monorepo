@@ -1,8 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { AuthService } from 'apps/api/src/app/usecases/auth/auth.service';
-import { ValidateResponseDto } from 'apps/api/src/app/usecases/auth/dto';
-import { verify } from 'jsonwebtoken';
+import { JwtService } from '../providers/jwt/jwt.service';
+import { ValidateResponseDto } from '../providers';
 
 interface PayloadInterface {
   sub: string;
@@ -11,10 +9,7 @@ interface PayloadInterface {
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  constructor(
-    private readonly configService: ConfigService,
-    private readonly service: AuthService,
-  ) {}
+  constructor(private readonly jwtService: JwtService) {}
 
   getRequest(context: ExecutionContext) {
     return context.switchToHttp().getRequest();
@@ -28,7 +23,7 @@ export class JwtAuthGuard implements CanActivate {
       return false;
     }
 
-    const payload = this.verifyToken(accessToken);
+    const payload = this.jwtService.verifyToken(accessToken);
     if (!payload.sub || !payload.email) {
       return false;
     }
@@ -42,19 +37,8 @@ export class JwtAuthGuard implements CanActivate {
     return true;
   }
 
-  verifyToken(accessToken: string): PayloadInterface {
-    try {
-      return verify(
-        accessToken.split(' ')[1],
-        this.configService.get<string>('JWT_SECRET'),
-      ) as PayloadInterface;
-    } catch (err) {
-      return { sub: null, email: null };
-    }
-  }
-
   validateUser(payload: PayloadInterface): Promise<ValidateResponseDto> {
-    return this.service.validate({
+    return this.jwtService.validate({
       id: payload.sub,
       email: payload.email,
     });

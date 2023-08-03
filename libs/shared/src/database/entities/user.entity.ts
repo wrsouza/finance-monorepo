@@ -26,6 +26,7 @@ export class UserEntity extends Identifiable implements IUserEntity {
 
   @ManyToMany(() => RoleEntity, (role) => role.users, {
     onDelete: 'CASCADE',
+    cascade: true,
     eager: true,
   })
   @JoinTable({

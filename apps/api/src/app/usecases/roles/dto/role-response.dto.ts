@@ -1,42 +1,42 @@
 import { generateUuid } from '@app/shared/utils/uuid-generate.util';
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose, plainToInstance } from 'class-transformer';
 
 export class RoleResponseDto {
   @ApiProperty({
     type: String,
     example: generateUuid(),
   })
-  @Expose()
   id: string;
 
   @ApiProperty({
     type: String,
     example: 'supervisor',
   })
-  @Expose()
   name: string;
 
   @ApiProperty({
     type: String,
     example: 'Supervisor',
   })
-  @Expose()
   description: string;
 
   @ApiProperty({
     type: Date,
     example: new Date(),
   })
-  @Expose()
   createdAt: Date;
 
+  @ApiProperty({
+    type: [String],
+    example: [],
+  })
+  permissions: string[];
+
   constructor(data: any) {
-    Object.assign(
-      this,
-      plainToInstance(RoleResponseDto, data, {
-        excludeExtraneousValues: true,
-      }),
-    );
+    this.id = data.id;
+    this.name = data.name;
+    this.description = data.description;
+    this.createdAt = data.createdAt;
+    this.permissions = data.permissions.map((permission) => permission.id);
   }
 }

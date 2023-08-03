@@ -1,7 +1,7 @@
-import { FindOptionsWhere, Not, Repository } from 'typeorm';
+import { FindOptionsWhere, In, Not, Repository } from 'typeorm';
 
 export abstract class BaseRepository<Entity> {
-  private readonly repository: Repository<Entity>;
+  readonly repository: Repository<Entity>;
 
   constructor(repository: Repository<Entity>) {
     this.repository = repository;
@@ -28,5 +28,9 @@ export abstract class BaseRepository<Entity> {
 
   async destroy(where: FindOptionsWhere<Entity>): Promise<void> {
     await this.repository.delete(where);
+  }
+
+  findByIds(ids: string[]): Promise<Entity[]> {
+    return this.repository.findBy({ id: In(ids) } as any);
   }
 }

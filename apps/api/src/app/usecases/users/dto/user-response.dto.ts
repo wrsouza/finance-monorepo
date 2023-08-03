@@ -1,49 +1,49 @@
 import { generateUuid } from '@app/shared/utils/uuid-generate.util';
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose, plainToInstance } from 'class-transformer';
 
 export class UserResponseDto {
   @ApiProperty({
     type: String,
     example: generateUuid(),
   })
-  @Expose()
   id: string;
 
   @ApiProperty({
     type: String,
     example: 'John Doe',
   })
-  @Expose()
   name: string;
 
   @ApiProperty({
     type: String,
     example: 'john.doe@domain.com',
   })
-  @Expose()
   email: string;
 
   @ApiProperty({
     type: Boolean,
     example: false,
   })
-  @Expose()
   isAdmin: boolean;
 
   @ApiProperty({
     type: Date,
     example: new Date(),
   })
-  @Expose()
   createdAt: Date;
 
+  @ApiProperty({
+    type: [String],
+    example: [],
+  })
+  roles: string[];
+
   constructor(data: any) {
-    Object.assign(
-      this,
-      plainToInstance(UserResponseDto, data, {
-        excludeExtraneousValues: true,
-      }),
-    );
+    this.id = data.id;
+    this.name = data.name;
+    this.email = data.email;
+    this.isAdmin = data.isAdmin;
+    this.createdAt = data.createdAt;
+    this.roles = data.roles.map((role) => role.id);
   }
 }

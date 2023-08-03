@@ -1,4 +1,4 @@
-import { FindOptionsWhere } from 'typeorm';
+import { FindOptionsWhere, In } from 'typeorm';
 
 export interface IRepository<Entity> {
   list(where: FindOptionsWhere<Entity>): Promise<Entity[]>;
@@ -10,4 +10,6 @@ export interface IRepository<Entity> {
   findOne(where: FindOptionsWhere<Entity>): Promise<Entity>;
 
   destroy(where: FindOptionsWhere<Entity>): Promise<void>;
+
+  findByIds(ids: string[]): Promise<Entity[]>;
 }

@@ -32,6 +32,11 @@ export default class PermissionSeeder implements Seeder {
         name: 'users-delete',
         description: 'Delete User',
       },
+      {
+        id: uuid(),
+        name: 'users-roles',
+        description: 'Update User Roles',
+      },
     ];
 
     const roles = [
@@ -59,6 +64,11 @@ export default class PermissionSeeder implements Seeder {
         id: uuid(),
         name: 'roles-delete',
         description: 'Delete Role',
+      },
+      {
+        id: uuid(),
+        name: 'roles-permissions',
+        description: 'Update Role Permissions',
       },
     ];
 

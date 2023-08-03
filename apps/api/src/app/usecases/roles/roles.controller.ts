@@ -4,14 +4,20 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Put,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RolesService } from './roles.service';
-import { RoleResponseDto } from './dto/role-response.dto';
-import { CreateRoleDto, RoleDto, UpdateRoleDto } from './dto';
+import {
+  CreateRoleDto,
+  RoleDto,
+  UpdateRoleDto,
+  UpdateRolePermissionsDto,
+  RoleResponseDto,
+} from './dto';
 import { AuthorizeGuard, JwtAuthGuard, Roles } from '@app/shared';
 
 @ApiTags('Roles')
@@ -57,5 +63,15 @@ export class RolesController {
   @Delete('/:id')
   destroy(@Param() { id }: RoleDto): Promise<void> {
     return this.service.destroy(id);
+  }
+
+  @Roles('roles-permissions')
+  @UseGuards(AuthorizeGuard)
+  @Patch('/:id/permissions')
+  updatePermissions(
+    @Param() { id }: RoleDto,
+    @Body() data: UpdateRolePermissionsDto,
+  ): Promise<RoleResponseDto> {
+    return this.service.updatePermissions(id, data);
   }
 }

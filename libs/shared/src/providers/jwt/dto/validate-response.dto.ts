@@ -1,4 +1,4 @@
-import { generateUuid } from '@app/shared/utils/uuid-generate.util';
+import { generateUuid } from '@app/shared/utils';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class ValidateResponseDto {

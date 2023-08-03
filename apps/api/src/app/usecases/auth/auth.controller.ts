@@ -7,9 +7,9 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { LoginDto, LoginResponseDto, ValidateResponseDto } from './dto';
+import { LoginDto, LoginResponseDto } from './dto';
 import { AuthService } from './auth.service';
-import { JwtAuthGuard } from '@app/shared';
+import { JwtAuthGuard, ValidateResponseDto } from '@app/shared';
 
 @ApiTags('Auth')
 @Controller('auth')

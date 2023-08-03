@@ -12,4 +12,9 @@ export class Role extends Entity<IRoleEntity> {
       name: this.name,
     });
   }
+
+  async updatePermissions(permissions: Permission[]): Promise<this> {
+    this.permissions = permissions;
+    return this;
+  }
 }
