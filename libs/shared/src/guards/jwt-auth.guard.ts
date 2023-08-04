@@ -1,6 +1,14 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { JwtService } from '../providers/jwt/jwt.service';
-import { ValidateResponseDto } from '../providers';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserEntity } from '../database';
+import { Repository } from 'typeorm';
+import { ValidateResponseDto } from '../dto';
 
 interface PayloadInterface {
   sub: string;
@@ -9,7 +17,11 @@ interface PayloadInterface {
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    @InjectRepository(UserEntity)
+    private readonly repository: Repository<UserEntity>,
+  ) {}
 
   getRequest(context: ExecutionContext) {
     return context.switchToHttp().getRequest();
@@ -37,10 +49,14 @@ export class JwtAuthGuard implements CanActivate {
     return true;
   }
 
-  validateUser(payload: PayloadInterface): Promise<ValidateResponseDto> {
-    return this.jwtService.validate({
+  async validateUser(payload: PayloadInterface): Promise<ValidateResponseDto> {
+    const user = await this.repository.findOneBy({
       id: payload.sub,
       email: payload.email,
     });
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+    return new ValidateResponseDto(user);
   }
 }
